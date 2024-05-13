@@ -1174,15 +1174,20 @@ def HanoiTowersRecursion(init: MyStack, buffer: MyStack, goal: MyStack, size: in
     # move the buffer to the goal using initial as the buffer
     HanoiTowersRecursion(buffer, init, goal, size - 1)
 
+def permutationsWithoutDups(s: str) -> list[str]:
+    if len(s) == 0:
+        return []
+    res = []
+    for i,c in enumerate(s):
+        temp = permutationsWithoutDups(s[0:i] + s[i + 1:])
+        res_temp = [c + perm for perm in temp]
+        res = res + res_temp + [c]
+    return res
+
 
 
 
 if __name__ == "__main__":
-    init = MyStack()
-    goal = MyStack()
-    buffer = MyStack()
-    for i in range(4, 0, -1):
-        init.push(i)
-    HanoiTowersRecursion(init, buffer, goal, 4)
-    while not goal.isEmpty():
-        print(goal.pop())
+    permutations = permutationsWithoutDups("abc")
+    for perm in permutations:
+        print(perm)
