@@ -1184,10 +1184,22 @@ def permutationsWithoutDups(s: str) -> list[str]:
         res = res + res_temp + [c]
     return res
 
+def permutationsWithDups(s: str) -> list[str]:
+    if len(s) == 0:
+        return []
+    res = []
+    seen_char = {}
+    for i,c in enumerate(s):
+        if c not in seen_char:
+            seen_char[c] = 1
+            temp = permutationsWithDups(s[0:i] + s[i + 1:])
+            res_temp = [c + perm for perm in temp]
+            res = res + res_temp + [c]
+    return res
 
 
 
 if __name__ == "__main__":
-    permutations = permutationsWithoutDups("abc")
+    permutations = permutationsWithDups("aabb")
     for perm in permutations:
         print(perm)
