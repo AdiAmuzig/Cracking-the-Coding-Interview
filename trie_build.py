@@ -1213,8 +1213,33 @@ def parensRecursion(opened: int, closed: int, s: str, res: list[str]) -> list[st
     
     if closed > 0 and closed > opened:
         parensRecursion(opened, closed - 1, s + ")", res)
+
+
+
+def paintFill(image: list[list[int]], x: int, y: int, new_color: int) -> None:
+    paintFillRecursion(image, x, y, new_color, image[x][y])
+
+def paintFillRecursion(image: list[list[int]], x: int, y: int, new_color: int, old_color: int) -> None:
+    if x > len(image) - 1 or x < 0 or \
+        y > len(image[0]) - 1 or y < 0 or \
+        image[x][y] != old_color:
+        return 
+
+    image[x][y] = new_color
+
+    paintFillRecursion(image, x + 1, y, new_color, old_color)
+    paintFillRecursion(image, x - 1, y, new_color, old_color)
+    paintFillRecursion(image, x, y + 1, new_color, old_color)
+    paintFillRecursion(image, x, y - 1, new_color, old_color)
+
     
 
 if __name__ == "__main__":
-    res = parens(2)
-    print(res)
+    image = [[ 1, 1, 1, 1, 2, 1, 1, 1],
+               [ 1, 1, 1, 1, 1, 1, 1, 1],
+               [1,2,2,2,2,2,2,1],
+               [1,2,2,2,2,2,2,1],
+               [1,1,1,1,1,1,1,1]]
+    paintFill(image, 2, 2, 3)
+    
+    print(image)
