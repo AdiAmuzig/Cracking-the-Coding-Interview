@@ -1,6 +1,7 @@
 import numpy as np
 import math
 import random
+from collections import Counter
 import matplotlib.pyplot as plt
 
 def print_val(val: int) -> None:
@@ -1197,9 +1198,23 @@ def permutationsWithDups(s: str) -> list[str]:
             res = res + res_temp + [c]
     return res
 
-
+def parens(n: int) -> list[str]:
+    res = []
+    parensRecursion(n, n, "", res)
+    return res
+    
+def parensRecursion(opened: int, closed: int, s: str, res: list[str]) -> list[str]:
+    if opened == 0 and closed == 0:
+        res.append(s)
+        return 
+    
+    if opened > 0:
+        parensRecursion(opened - 1, closed, s + "(", res)
+    
+    if closed > 0 and closed > opened:
+        parensRecursion(opened, closed - 1, s + ")", res)
+    
 
 if __name__ == "__main__":
-    permutations = permutationsWithDups("aabb")
-    for perm in permutations:
-        print(perm)
+    res = parens(2)
+    print(res)
