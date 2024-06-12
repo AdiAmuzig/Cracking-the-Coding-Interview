@@ -1232,14 +1232,144 @@ def paintFillRecursion(image: list[list[int]], x: int, y: int, new_color: int, o
     paintFillRecursion(image, x, y + 1, new_color, old_color)
     paintFillRecursion(image, x, y - 1, new_color, old_color)
 
+
+def coinsSum(n: int) -> int:
+    coins = [1, 5, 10, 25]
+    combinations = [0] * (n + 1)
+    combinations[0] = 1
     
+    for coin in coins:
+        for i in range(coin, n + 1):
+            combinations[i] += combinations[i - coin]
+    return combinations[n]
+
+class QueenChess:
+    def __init__(self) -> None:
+        self.board = [[-1] * 8 for _ in range(8)]
+
+    def canAddQueen(self, row: int, column: int) -> bool:
+        return self.board[row][column] == -1
+    
+    def addQueen(self, row: int, column: int) -> None:
+        for i in range(8):
+            # rows and columns
+            if self.board[row][i] == -1:
+                self.board[row][i] = row
+
+            if self.board[i][column] == -1:
+                self.board[i][column] = row
+
+            # diagonals
+            if row + i < 8 and column + i < 8 and self.board[row + i][column + i] == -1:
+                self.board[row + i][column + i] = row
+            if row - i >= 0 and column - i >= 0 and self.board[row - i][column - i] == -1:
+                self.board[row - i][column - i] = row
+            if row + i < 8 and column - i >= 0 and self.board[row + i][column - i] == -1:
+                self.board[row + i][column - i] = row
+            if row - i >= 0 and column + i < 8 and self.board[row - i][column + i] == -1:
+                self.board[row - i][column + i] = row
+
+    def removeQueen(self, queen: int) -> None:
+        for i in range(8):
+            for j in range(8):
+                if self.board[i][j] == queen:
+                    self.board[i][j] = -1
+
+class EightQueens:
+    def __init__(self) -> None:
+        self.board = QueenChess()
+        self.res = []
+
+    def arrangingQueens(self, row: int = 0, queen_list: list[list[int]] = []) -> None:
+        if row == 8:
+            copy_queen_list = []
+            for queen in queen_list:
+                copy_queen_list.append(queen.copy())
+            self.res.append(copy_queen_list)
+            return
+        
+        for i in range(8):
+            if self.board.canAddQueen(row, i):
+                self.board.addQueen(row, i)
+                queen_list.append([row, i])
+                self.arrangingQueens(row + 1, queen_list)
+                queen_list.pop()
+                self.board.removeQueen(row)
+
+       
+def stackOfBoxes(boxes: list[list[int]]) -> int:
+    # assuming list accoding to [height, width, depth]
+    boxes.sort(key = lambda x: x[0])
+
+    tallest_with_box = [0] * len(boxes)
+    tallest_with_box [0] = boxes[0][0]
+
+    for i in range(1, len(boxes)):
+        max_with_box = 0
+        for j in range(i - 1, -1, -1):
+            if boxes[i][0] > boxes[j][0] and \
+                boxes[i][1] > boxes[j][1] and \
+                boxes[i][2] > boxes[j][2]:
+                max_with_box = max(max_with_box, tallest_with_box[j])
+
+        tallest_with_box[i] = max_with_box + boxes[i][0]
+
+    return max(tallest_with_box)
+
+def booleanEvaluation(str_exp : str, result_value : bool) -> int:
+    if len(str_exp) == 0:
+        return 0
+    list_exp = str_exp.split()
+    seen_expressions = {"1" : [0,1], "0": [1,0]}
+    FT_results = booleanEvaluationRecursive(list_exp, seen_expressions)
+    return FT_results[1] if result_value == "1" else FT_results[0]
+
+def booleanEvaluationRecursive(list_exp : list[str], seen_expressions: map) -> list[int]:
+    str_exp = " ".join(list_exp)
+    if str_exp in seen_expressions:
+        return seen_expressions[str_exp]
+    
+    if len(list_exp) == 3:
+        result = FTfunction(booleanEvaluationRecursive(list_exp[0], seen_expressions),
+                           booleanEvaluationRecursive(list_exp[2], seen_expressions), 
+                           list_exp[1])
+        seen_expressions[str_exp] = result
+        return result
+    
+    result = [0, 0]
+
+    for i in range(2, len(list_exp) - 1, 2):
+        left_values = booleanEvaluationRecursive(list_exp[:i + 1], seen_expressions)
+        right_values = booleanEvaluationRecursive(list_exp[i + 2:], seen_expressions)
+        FT_results_even = FTfunction(left_values, right_values, list_exp[i + 1]) 
+        result = [result[0] + FT_results_even[0], result[1] + FT_results_even[1]]
+    
+    for i in range(4, len(list_exp) + 1, 2):
+        left_values = booleanEvaluationRecursive(list_exp[2 : i + 1], seen_expressions)
+        if i < len(list_exp) - 1:
+            right_values = booleanEvaluationRecursive(list_exp[i + 2:], seen_expressions)
+            FT_values_temp = FTfunction(left_values, right_values, list_exp[i + 1])
+            FT_values_uneven = FTfunction( booleanEvaluationRecursive(list_exp[0], seen_expressions),
+                                           FT_values_temp, list_exp[1])
+            result = [result[0] + FT_values_uneven[0], result[1] + FT_values_uneven[1]]
+        else:
+            FT_values_uneven = FTfunction(booleanEvaluationRecursive(list_exp[0], seen_expressions), 
+                                          left_values, list_exp[1])
+            result = [result[0] + FT_values_uneven[0], result[1] + FT_values_uneven[1]]
+
+    seen_expressions[str_exp] = result
+
+    return result
+
+def FTfunction(FT1 : list[int], FT2: list[int], operator: str) -> list[int]:
+    if operator == "&":
+        return [FT1[0] * FT2[0] + FT1[1] * FT2[0] + FT1[0] * FT2[1], FT1[1] * FT2[1]]
+    elif operator == "|":
+        return [FT1[0] * FT2[0], FT1[1] * FT2[1] + FT1[1] * FT2[0] + FT1[0] * FT2[1]]
+    elif operator == "^":
+        return [FT1[0] * FT2[0] + FT1[1] * FT2[1], FT1[0] * FT2[1] + FT1[1] * FT2[0]]
+
 
 if __name__ == "__main__":
-    image = [[ 1, 1, 1, 1, 2, 1, 1, 1],
-               [ 1, 1, 1, 1, 1, 1, 1, 1],
-               [1,2,2,2,2,2,2,1],
-               [1,2,2,2,2,2,2,1],
-               [1,1,1,1,1,1,1,1]]
-    paintFill(image, 2, 2, 3)
-    
-    print(image)
+    expression = "1 | 1 | 1 | 1" 
+    print(booleanEvaluation(expression, "0"))
