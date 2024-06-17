@@ -1369,7 +1369,118 @@ def FTfunction(FT1 : list[int], FT2: list[int], operator: str) -> list[int]:
     elif operator == "^":
         return [FT1[0] * FT2[0] + FT1[1] * FT2[1], FT1[0] * FT2[1] + FT1[1] * FT2[0]]
 
+def megeSort(arr: list[int]) -> list[int]:
+    """"""
+    if len(arr) == 1:
+        return arr
+    mid = len(arr) // 2
+    left = megeSort(arr[:mid])
+    right = megeSort(arr[mid:])
+    return merge(left, right)
 
+def merge(left: list[int], right: list[int]) -> list[int]:
+    res = []
+    i = 0
+    j = 0
+    while i < len(left) and j < len(right):
+        if left[i] < right[j]:
+            res.append(left[i])
+            i += 1
+        else:
+            res.append(right[j])
+            j += 1
+    res += left[i:]
+    res += right[j:]
+    return res
+
+def quickSort(arr: list[int], left: int, right: int) -> list[int]:
+    if left < right:
+        pivot = partition(arr, left, right)
+        quickSort(arr, left, pivot - 1)
+        quickSort(arr, pivot + 1, right)
+    return arr
+
+def partition(arr: list[int], left: int, right: int) -> int:
+    pivot = arr[right]
+    i = left - 1
+    for j in range(left, right):
+        if arr[j] < pivot:
+            i += 1
+            arr[i], arr[j] = arr[j], arr[i]
+    arr[i + 1], arr[right] = arr[right], arr[i + 1]
+    return i + 1
+
+def binarySearch(arr: list[int], val: int) -> int:
+    low = 0
+    high = len(arr) - 1
+
+    while low <= high:
+        mid = (high + low) // 2
+        if arr[mid] > val:
+            high = mid - 1
+        elif arr[mid] < val:
+            low = mid + 1
+        else:
+            return mid
+
+    return - 1
+
+def mergeSorted(A: list[int], B: list[int]) -> list[int]:
+    j = len(A) - 1
+    k = len(B) - 1
+    i = 0
+    
+    while A[i] != None:
+        i += 1
+    i -= 1
+
+    while j >= 0 and i >= 0:
+        if A[i] > B[k]:
+            A[i], A[j] = A[j], A[i]
+            i -= 1
+        else:
+            A[j] = B[k]
+            k -= 1
+        j -= 1
+    
+    while k >= 0:
+        A[j] = B[k]
+        k -= 1
+        j -= 1
+
+    return A
+
+def groupAnagram(words: list[str]) -> list[str]:
+    group_anagrams = []
+    anagram_dict = {}
+    
+    for word in words:
+        sorted_word = "".join(sorted(word))
+        if sorted_word not in anagram_dict:
+            anagram_dict[sorted_word] = []
+        anagram_dict[sorted_word].append(word)
+
+    for key in anagram_dict:
+        group_anagrams += anagram_dict[key]
+
+    return group_anagrams
+
+def searchRotatedArray(arr: list[int], val: int) -> int:
+    low = 0
+    high = len(arr) - 1
+
+    while low <= high:
+        mid = (low + high) // 2
+        if arr[mid] == val:
+            return mid
+        if arr[low] <= arr[mid]:
+            if ((arr[low] < arr[mid] and arr[low] <= val < arr[mid])) or \
+                (arr[low] > arr[mid] and (arr[mid] >= val or arr[high] <= val)):
+                high = mid - 1
+            else:
+                low = mid + 1
+    return -1
+            
 if __name__ == "__main__":
-    expression = "1 | 1 | 1 | 1" 
-    print(booleanEvaluation(expression, "0"))
+    arr = [4, 5 ,6 ,1 ,2 ,3]
+    print(searchRotatedArray(arr, 8))
